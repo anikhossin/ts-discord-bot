@@ -1,9 +1,6 @@
 import { Client } from "discord.js";
 import { EventHandler } from "./Handlers/EventHandler";
-import { config } from "dotenv";
 
-
-config();
 
 const client = new Client({
   intents: [
@@ -19,7 +16,7 @@ let eventHandler: EventHandler;
 
 eventHandler = new EventHandler(client);
 
-(client as any)._eventHandler = eventHandler;
+client._eventHandlers = eventHandler;
 
 client.login(process.env.TOKEN).catch((error) => {
   console.error("Failed to login to Discord:", error);
