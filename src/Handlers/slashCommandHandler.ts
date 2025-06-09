@@ -14,8 +14,7 @@ import {
 } from "../types/Command-type";
 import fs from "fs";
 import path from "path";
-
-
+import { authManager } from "../lib/auth";
 
 export class SlashCommandHandler implements CommandHandler {
   private readonly client: Client;
@@ -172,9 +171,7 @@ export class SlashCommandHandler implements CommandHandler {
               })),
             })) || [],
         }));
-      console.log(
-        `Registering ${commandData.length} commands with Discord...`
-      );
+      console.log(`Registering ${commandData.length} commands with Discord...`);
 
       try {
         await this.rest.put(
@@ -224,7 +221,27 @@ export class SlashCommandHandler implements CommandHandler {
       return;
     }
 
-    //here we can check if the user has permission to execute the command
+    if (!interaction.guild) {
+      await interaction.reply({
+        content: "This command can only be used in a server.",
+        flags: 64, // Ephemeral
+      });
+      return;
+    }
+
+    if (
+      !(await authManager.hasPermission(
+        interaction.user.id,
+        interaction.guild,
+        command.permission.level
+      ))
+    ) {
+      await interaction.reply({
+        content: "You do not have permission to use this command.",
+        flags: 64, // Ephemeral
+      });
+      return;
+    }
 
     try {
       await command.execute(context);

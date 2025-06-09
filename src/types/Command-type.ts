@@ -47,7 +47,6 @@ export interface SubCommand {
 
 export enum AuthPermissionLevels {
   EVERYONE = 0,
-  SELLER = 1,
   ADMIN = 2,
   OWNER = 3,
   DEVELOPER = 4,
